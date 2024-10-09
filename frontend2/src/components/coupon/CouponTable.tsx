@@ -89,12 +89,12 @@ export default function CouponTable() {
                 </TableCell>
                 <TableCell variant="body" key={`startDate-${coupon.id}`}>
                   <Typography variant="body1">
-                    {coupon.startDate?.toDateString()}
+                    {new Date(coupon.startDate).toLocaleDateString()}
                   </Typography>
                 </TableCell>
                 <TableCell variant="body" key={`endDate-${coupon.id}`}>
                   <Typography variant="body1">
-                    {coupon.endDate?.toDateString()}
+                    {new Date(coupon.endDate).toLocaleDateString()}
                   </Typography>
                 </TableCell>
                 <TableCell variant="body" key={`amount-${coupon.id}`}>

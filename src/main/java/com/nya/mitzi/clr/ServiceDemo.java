@@ -4,14 +4,22 @@ import com.nya.mitzi.category.Category;
 import com.nya.mitzi.category.CategoryService;
 import com.nya.mitzi.company.Company;
 import com.nya.mitzi.company.CompanyService;
+import com.nya.mitzi.coupon.Coupon;
+import com.nya.mitzi.coupon.CouponService;
+import com.nya.mitzi.couponCustomer.CouponCustomer;
 import com.nya.mitzi.customer.Customer;
 import com.nya.mitzi.customer.CustomerService;
 import com.nya.mitzi.exception.CategoryException;
 import com.nya.mitzi.exception.CompanyException;
+import com.nya.mitzi.exception.CouponException;
 import com.nya.mitzi.exception.CustomerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class ServiceDemo implements CommandLineRunner {
@@ -19,14 +27,24 @@ public class ServiceDemo implements CommandLineRunner {
     @Autowired
     private CategoryService categoryService;
     @Autowired
+    private CouponService couponService;
+    @Autowired
     private CompanyService companyService;
     @Autowired
     private CustomerService customerService;
+    public List<Company> companies4Test=new ArrayList<>();
+    public List<Customer>customers4Test=new ArrayList<>();
+    public List<Category>categories4Test=new ArrayList<>();
+    public List<Coupon>coupons4Test=new ArrayList<>();
 
     @Override
     public void run(String... args) throws java.lang.Exception {
 
-        //this.addCompanies(1,10,true);
+        this.addCompanies(1,20,true);
+        this.addCategories(1,20,true);
+        this.addCustomers(1,10,true);
+        this.addCoupons(1,10,true);
+        this.addPurchases(1,10,true);
 
         /*System.out.println("CATEGORY:");
         System.out.println("add:");
@@ -657,7 +675,74 @@ public class ServiceDemo implements CommandLineRunner {
                     e.printStackTrace();
                 }
             }
-            //this.companies4Test.add(company);
+            this.companies4Test.add(company);
+        }
+    }
+
+    public void addCustomers(int firstSerialNumber,int amount,boolean isAddToDb){
+        for (int i = firstSerialNumber; i <firstSerialNumber+amount ; i++) {
+            Customer customer=Customer.builder()
+                    .firstName("customer"+(i))
+                    .email("customer"+(i)+"@email")
+                    .password("password"+(i))
+                    .build();
+            if(isAddToDb) {
+                try {
+                    this.customerService.addCustomer(customer);
+                } catch (CustomerException e) {
+                    e.printStackTrace();
+                }
+            }
+            this.customers4Test.add(customer);
+        }
+    }
+
+    public void addCategories(int firstSerialNumber,int amount,boolean isAddToDb) {
+        for (int i = firstSerialNumber; i < firstSerialNumber + amount; i++) {
+            Category category = Category.builder()
+                    .name("category" + (i))
+                    .build();
+            if (isAddToDb) {
+                try {
+                    this.categoryService.addCategory(category);
+                } catch (CategoryException e) {
+                    e.printStackTrace();
+                }
+            }
+            this.categories4Test.add(category);
+        }
+    }
+
+    public void addCoupons(int firstSerialNumber,int amount,boolean isAddToDb) throws CompanyException {
+        for (int i = firstSerialNumber; i <firstSerialNumber+amount ; i++) {
+            Coupon coupon=Coupon.builder()
+                    .price(i+1)
+                    .category(categories4Test.get(i))
+                    .title("coupon"+(i+1))
+                    .company(companies4Test.get(i))
+                    .amount(i)
+                    .endDate(LocalDate.now().plusDays(1))
+                    .startDate(LocalDate.now().minusDays(1))
+                    .description("description"+(i+1))
+                    .build();
+            if(isAddToDb) {
+                try {
+                    this.couponService.addCoupon(coupon);
+                } catch (CouponException e) {
+                    e.printStackTrace();
+                }
+            }
+            this.coupons4Test.add(coupon);
+        }
+    }
+
+    public void addPurchases(int firstSerialNumber,int amount,boolean isAddToDb) {
+        for (int i = firstSerialNumber; i < firstSerialNumber + amount; i++) {
+            try {
+                this.couponService.purchaseCoupon(i,i);
+            } catch (CustomerException|CouponException e) {
+                e.printStackTrace();
+            }
         }
     }
 }
