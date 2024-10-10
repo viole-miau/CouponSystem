@@ -1,31 +1,30 @@
 import { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import Company from "../../models/Company";
-import { InputAdornment, IconButton, Button } from "@mui/material";
+import {
+  InputAdornment,
+  IconButton,
+  Button,
+  Paper,
+  Typography,
+} from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { useParams } from "react-router-dom";
 
-type CompanyFormParams = {
-  company?: Company;
-  onSubmit: (Company: Company) => void;
+type CompanyFormProps = {
+  onSubmit: (company: Company) => Promise<boolean>;
 };
 
-export default function CompanyForm(params: CompanyFormParams) {
+export default function CompanyForm(props: CompanyFormProps) {
+  const { companyId } = useParams();
+
   const [companyName, setCompanyName] = useState("");
+  const [companyNameError, setCompanyNameError] = useState(false);
   const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState(false);
   const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
   const [isShowPassword, setIsShowPassword] = useState(false);
-  const [company, setCompany] = useState<Company>();
-
-  useEffect(() => {
-    if (params.company) {
-      setCompany(params.company);
-    }
-  }, [params.company]);
-
-  useEffect(() => {
-    setCompany(new Company({ name: companyName, email, password }));
-  }, [companyName, email, password]);
 
   function handleClickShowPassword() {
     setIsShowPassword(!isShowPassword);
@@ -33,64 +32,83 @@ export default function CompanyForm(params: CompanyFormParams) {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (company) {
-      params.onSubmit(company);
-    } else {
-      console.error("company cannot be null");
+    if (!companyName) {
+      setCompanyNameError(true);
+    }
+    if (!email) {
+      setEmailError(true);
+    }
+    if (!password) {
+      setPasswordError(true);
+    }
+    if (companyName && email && password) {
+      const company = new Company({
+        name: companyName,
+        email,
+        password,
+      });
+      props
+        .onSubmit(company)
+        .then((res) =>
+          res
+            ? console.log("Succesfully entered company")
+            : console.log("Failed to submit company")
+        )
+        .catch((err) => console.error(err));
     }
   }
 
   return (
-    <Box
-      component="form"
-      sx={{ "& .MuiTextField-root": { m: 1, width: "25ch" } }}
-      noValidate
-      autoComplete="off"
-    >
-      <div>
-        <TextField
-          required
-          id="companyName"
-          label="Company Name"
-          variant="outlined"
-          onChange={(e) => setCompanyName(e.target.value)}
-        />
-        <TextField
-          required
-          id="companyEmail"
-          label="Email"
-          variant="outlined"
-          inputMode="email"
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <TextField
-          required
-          label="Password"
-          variant="outlined"
-          type={isShowPassword ? "text" : "password"}
-          onChange={(e) => setPassword(e.target.value)}
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <IconButton
-                    onClick={handleClickShowPassword}
-                    onMouseDown={(e) => e.preventDefault()}
-                    onMouseUp={(e) => e.preventDefault()}
-                    aria-label="toggle password visibility"
-                    edge="end"
-                  >
-                    {isShowPassword ? <VisibilityOff /> : <Visibility />}
-                  </IconButton>
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-        <Button variant="contained" onClick={handleSubmit}>
-          Contained
-        </Button>
-      </div>
-    </Box>
+    <>
+      <form autoComplete="false" noValidate onSubmit={handleSubmit}>
+        <Paper>
+          <TextField
+            required
+            id="companyName"
+            label="Company Name"
+            variant="outlined"
+            error={companyNameError}
+            onChange={(e) => setCompanyName(e.target.value)}
+          />
+          <TextField
+            required
+            id="companyEmail"
+            label="Email"
+            variant="outlined"
+            inputMode="email"
+            error={emailError}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            required
+            label="Password"
+            variant="outlined"
+            type={isShowPassword ? "text" : "password"}
+            error={passwordError}
+            onChange={(e) => setPassword(e.target.value)}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={handleClickShowPassword}
+                      onMouseDown={(e) => e.preventDefault()}
+                      onMouseUp={(e) => e.preventDefault()}
+                      aria-label="toggle password visibility"
+                      edge="end"
+                    >
+                      {isShowPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
+          />
+          <Button variant="contained" color="secondary" type="submit">
+            <Typography variant="body1">Submit</Typography>
+          </Button>
+        </Paper>
+      </form>
+    </>
   );
 }

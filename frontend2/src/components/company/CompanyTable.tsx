@@ -46,7 +46,7 @@ export default function CompanyTable() {
                   {company.email}
                 </TableCell>
                 <TableCell variant="body" key={`password-${company.id}`}>
-                  {company.password}
+                  {company.passwordMasked}
                 </TableCell>
               </TableRow>
             ))}

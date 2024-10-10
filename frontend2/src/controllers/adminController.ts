@@ -2,95 +2,7 @@ import BaseController from "./BaseController";
 import Company from "../models/Company";
 import Customer from "../models/Customer";
 
-/*export function addCompany(name: string, email: string, password: string) {
-  baseController
-    .post("admin/addCompany", { name, email, password })
-    .then((response: any) => console.log(response))
-    .catch((error: any) => console.log(error));
-}
-
-export function updateCompany(
-  id: number,
-  name: string,
-  email: string,
-  password: string
-) {
-  baseController
-    .post("admin/updateCompany/${id}", { id, name, email, password })
-    .then((response: any) => console.log(response))
-    .catch((error: any) => console.log(error));
-}
-
-export function deleteCompany() {
-  baseController
-    .delete("admin/deleteCompany/${id}")
-    .then((response: any) => console.log(response))
-    .catch((error: any) => console.log(error));
-}
-
-export function getCompany() {
-  baseController
-    .get("admin/getCompany/${id}")
-    .then((response: any) => console.log(response))
-    .catch((error: any) => console.log(error));
-}
-
-export function getAllCompanies() {
-  baseController
-    .get("admin/getAllCompanies")
-    .then((response: any) => console.log(response))
-    .catch((error: any) => console.log(error));
-}
-
- export function addCustomer(
-  firstName: string,
-  lastName: string,
-  email: string,
-  password: string
-) {
-  baseController
-    .post("admin/addCustomer", { firstName, lastName, email, password })
-    .then((response: any) => console.log(response))
-    .catch((error: any) => console.log(error));
-}
-
-export function updateCustomer(
-  firstName: string,
-  lastName: string,
-  email: string,
-  password: string
-) {
-  baseController
-    .post("admin/updateCustomer/${id}", {
-      firstName,
-      lastName,
-      email,
-      password,
-    })
-    .then((response: any) => console.log(response))
-    .catch((error: any) => console.log(error));
-}
-
-export function deleteCustomer() {
-  baseController
-    .delete("admin/deleteCustomer/${id}")
-    .then((response: any) => console.log(response))
-    .catch((error: any) => console.log(error));
-}
-
-export function getCustomer() {
-  baseController
-    .get<Customer>("admin/getCustomer/${id}")
-    .then((response: any) => console.log(response))
-    .catch((error: any) => console.log(error));
-}
-
-export function getAllCustomers() {
-  baseController
-    .get("admin/getAllCustomers")
-    .then((response: any) => console.log(response))
-    .catch((error: any) => console.log(error));
-} */
+//sends queries to server
 
 export default class AdminController extends BaseController {
   constructor() {
@@ -98,26 +10,25 @@ export default class AdminController extends BaseController {
     super(baseUrl);
   }
 
-  async addCompany(company: Omit<Company, "id">) {
+  async addCompany(company: Omit<Company, "id">): Promise<boolean> {
     try {
-      const response = await this.instance.post("addCompany", {
-        name: company.name,
-        email: company.email,
-        password: company.password,
-      });
-      console.log(response);
+      const response = await this.instance.post("addCompany", company);
+      if (response.status == 200) {
+        return true;
+      } else {
+        return false;
+      }
     } catch (err) {
-      console.error(err);
+      throw err;
     }
   }
 
   async updateCompany(company: Company) {
     try {
-      const response = await this.instance.put(`updateCompany/${company.id}`, {
-        name: company.name,
-        email: company.email,
-        password: company.password,
-      });
+      const response = await this.instance.put(
+        `updateCompany/${company.id}`,
+        company
+      );
       console.log(response);
     } catch (err) {
       console.error(err);
@@ -236,4 +147,14 @@ export function getCustomers() {
     .getAllCustomers()
     .then((result) => result)
     .catch((err) => console.log(err));
+}
+
+export function addCompany(company: Company) {
+  const controller = new AdminController();
+  return controller
+    .addCompany(company)
+    .then((result) => result)
+    .catch((err) => {
+      throw err;
+    });
 }

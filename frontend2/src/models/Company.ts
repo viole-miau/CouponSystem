@@ -9,17 +9,17 @@ class Company {
   public readonly id?: number;
   public name: string;
   public email: string;
-  private _password: string;
+  private password: string;
 
   constructor(args: CompanyConstractorArguments) {
     this.name = args.name;
     this.email = args.email;
-    this._password = args.password;
+    this.password = args.password;
     this.id = args.id;
   }
 
-  get password() {
-    return this._password
+  get passwordMasked() {
+    return this.password
       .split("")
       .map((char) => "*")
       .join("");

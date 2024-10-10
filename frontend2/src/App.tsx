@@ -6,21 +6,24 @@ import {
 } from "react-router-dom";
 import AdminLayout from "./components/layouts/AdminLayout";
 import { createTheme, ThemeProvider } from "@mui/material";
-import { grey, purple } from "@mui/material/colors";
+import { green, purple } from "@mui/material/colors";
 import CompanyTable from "./components/company/CompanyTable";
 import CustomerTable from "./components/customer/CustomerTable";
 import CouponTable from "./components/coupon/CouponTable";
-import { getCompanies, getCustomers } from "./controllers/adminController";
-import { getCouponsByCompany } from "./controllers/companyController";
-import { getCouponsByCustomer } from "./controllers/customerController";
+import {
+  getCompanies,
+  getCustomers,
+  addCompany,
+} from "./controllers/adminController";
 import CompanyLayout from "./components/layouts/CompanyLayout";
 import CustomerLayout from "./components/layouts/CustomerLayout";
+import CompanyForm from "./components/company/CompanyForm";
 
 const theme = createTheme({
   //creates a theme for all the material ui components in the project
   palette: {
     primary: purple,
-    secondary: grey,
+    secondary: green,
   },
   typography: {
     fontFamily: "quicksand",
@@ -32,10 +35,13 @@ const router = createBrowserRouter(
   //corresponding elements which it gets from function createRoutesFromElements. routs are h~~ierarchical
   createRoutesFromElements(
     //contains definitions of desired paths and elements
+
+    //loader: gets function and loads data from function immendiately once the page is up
     <Route path="/">
       <Route path="admin" element={<AdminLayout />}>
         <Route path="company">
           <Route index element={<CompanyTable />} loader={getCompanies} />
+          <Route path="add" element={<CompanyForm onSubmit={addCompany} />} />
         </Route>
         <Route path="customer">
           <Route index element={<CustomerTable />} loader={getCustomers} />

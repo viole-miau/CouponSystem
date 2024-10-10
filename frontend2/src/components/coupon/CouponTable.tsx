@@ -15,10 +15,16 @@ import { getCouponsByCompany } from "../../controllers/companyController";
 import { getCouponsByCustomer } from "../../controllers/customerController";
 
 export default function CouponTable() {
-  const { customerId, companyId } = useParams();
-  const [coupons, setCoupons] = useState<Coupon[]>([]);
+  //builds table
+  const { customerId, companyId } = useParams(); //contains a param, either company id or customer id
+  //where it gets param from?
+  const [coupons, setCoupons] = useState<Coupon[]>([]); //contains empty(?) list of coupons and
+  //setCoupons function to act on it
   useEffect(() => {
+    //loads data during life cycle (as opposed to?). in this case loads id
     if (customerId) {
+      //we check if id belongs to coupon or customer and set coupons accordingly
+      //using useEffect function and the relevant query
       getCouponsByCustomer(Number(customerId))
         .then((data) => data && setCoupons(data))
         .catch((err) => console.error(err));
@@ -31,6 +37,10 @@ export default function CouponTable() {
   }, []);
 
   return (
+    //first lines-table design
+    //table head-columns names are defined
+    //table body-creates rows, takes content from coupons list
+    //2 do: add comments to other tables
     <>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
