@@ -29,7 +29,6 @@ public class CategoryService {
         if(this.categoryRepo.existsByName(category.getName())){
             throw new CategoryException(ErrorMessage.NAME_EXIST);
         }
-        System.out.println("category added"+'\n');
         return this.categoryRepo.save(category);
     }
 
@@ -45,8 +44,6 @@ public class CategoryService {
         //1.
         if (!this.categoryRepo.existsById(id)) {
             throw new CategoryException(ErrorMessage.ID_NOT_EXIST);
-            //System.out.println("id not exist"+'\n');
-            //return;
         }
         category.setId(id);
         //2.1, 2.2
@@ -70,7 +67,6 @@ public class CategoryService {
         if(!this.categoryRepo.existsById(id)) {
             throw new CategoryException(ErrorMessage.ID_NOT_EXIST);//todo fix
         }
-        System.out.println("category deleted"+'\n');
         this.categoryRepo.deleteById(id);
     }
 

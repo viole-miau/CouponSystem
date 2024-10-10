@@ -10,9 +10,18 @@ import {
 } from "@mui/material";
 import Company from "../../models/Company";
 import { useLoaderData } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { getCompanies } from "../../controllers/adminController";
 
 export default function CompanyTable() {
-  const companies = useLoaderData() as Company[];
+  // const companies = useLoaderData() as Company[];
+
+  const [companies, setCompanies] = useState<Company[]>([]);
+
+  useEffect(() => {
+    getCompanies().then((data) => setCompanies(data));
+  }, []);
+
   return (
     <>
       <TableContainer component={Paper}>
@@ -37,19 +46,20 @@ export default function CompanyTable() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {companies.map((company) => (
-              <TableRow key={company.id}>
-                <TableCell variant="body" key={`name-${company.name}`}>
-                  {company.name}
-                </TableCell>
-                <TableCell variant="body" key={`email-${company.id}`}>
-                  {company.email}
-                </TableCell>
-                <TableCell variant="body" key={`password-${company.id}`}>
-                  {company.passwordMasked}
-                </TableCell>
-              </TableRow>
-            ))}
+            {companies &&
+              companies.map((company) => (
+                <TableRow key={company.id}>
+                  <TableCell variant="body" key={`name-${company.name}`}>
+                    {company.name}
+                  </TableCell>
+                  <TableCell variant="body" key={`email-${company.id}`}>
+                    {company.email}
+                  </TableCell>
+                  <TableCell variant="body" key={`password-${company.id}`}>
+                    {company.passwordMasked}
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

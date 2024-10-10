@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import TextField from "@mui/material/TextField";
 import Company from "../../models/Company";
 import {
@@ -9,15 +9,18 @@ import {
   Typography,
 } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { getCompany } from "../../controllers/adminController";
 
 type CompanyFormProps = {
   onSubmit: (company: Company) => Promise<boolean>;
 };
 
 export default function CompanyForm(props: CompanyFormProps) {
-  const { companyId } = useParams();
+  const { id } = useParams();
+  const navigate = useNavigate();
 
+  const [companyId, setCompanyId] = useState<number>();
   const [companyName, setCompanyName] = useState("");
   const [companyNameError, setCompanyNameError] = useState(false);
   const [email, setEmail] = useState("");
@@ -25,6 +28,26 @@ export default function CompanyForm(props: CompanyFormProps) {
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   const [isShowPassword, setIsShowPassword] = useState(false);
+  const [isPending, setIsPending] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
+  const [companyToEdit, setCompanyToEdit] = useState<Company>(
+    Company.emptyCompany()
+  );
+
+  useEffect(() => {
+    if (id) {
+      getCompany(Number(id))
+        .then((company) => {
+          setIsEdit(true);
+          setCompanyId(company.id);
+          setCompanyName(company.name);
+          setEmail(company.email);
+          setPassword(company.password);
+          setCompanyToEdit(company);
+        })
+        .catch((err) => console.error(err));
+    }
+  }, []);
 
   function handleClickShowPassword() {
     setIsShowPassword(!isShowPassword);
@@ -42,19 +65,30 @@ export default function CompanyForm(props: CompanyFormProps) {
       setPasswordError(true);
     }
     if (companyName && email && password) {
-      const company = new Company({
-        name: companyName,
-        email,
-        password,
-      });
+      const company = isEdit
+        ? new Company({
+            id: companyId,
+            name: companyName,
+            email,
+            password,
+          })
+        : new Company({
+            name: companyName,
+            email,
+            password,
+          });
+      setIsPending(true);
       props
         .onSubmit(company)
-        .then((res) =>
-          res
-            ? console.log("Succesfully entered company")
-            : console.log("Failed to submit company")
-        )
-        .catch((err) => console.error(err));
+        .then((res) => {
+          if (res) {
+            navigate({ pathname: "/admin/company" });
+          } else {
+            console.error("Failed to submit");
+          }
+        })
+        .catch((err) => console.error(err))
+        .finally(() => setIsPending(false));
     }
   }
 
@@ -62,14 +96,27 @@ export default function CompanyForm(props: CompanyFormProps) {
     <>
       <form autoComplete="false" noValidate onSubmit={handleSubmit}>
         <Paper>
-          <TextField
-            required
-            id="companyName"
-            label="Company Name"
-            variant="outlined"
-            error={companyNameError}
-            onChange={(e) => setCompanyName(e.target.value)}
-          />
+          {isEdit ? (
+            <TextField
+              required
+              id="companyName"
+              label="Company Name"
+              variant="outlined"
+              error={companyNameError}
+              defaultValue={companyToEdit.name}
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+            />
+          ) : (
+            <TextField
+              required
+              id="companyName"
+              label="Company Name"
+              variant="outlined"
+              error={companyNameError}
+              onChange={(e) => setCompanyName(e.target.value)}
+            />
+          )}
           <TextField
             required
             id="companyEmail"
@@ -104,7 +151,12 @@ export default function CompanyForm(props: CompanyFormProps) {
               },
             }}
           />
-          <Button variant="contained" color="secondary" type="submit">
+          <Button
+            variant="contained"
+            color="secondary"
+            type="submit"
+            disabled={isPending}
+          >
             <Typography variant="body1">Submit</Typography>
           </Button>
         </Paper>

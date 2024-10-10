@@ -15,7 +15,6 @@ public class CouponCustomerService  {
     }
 
     public void addCouponCustomer(Coupon coupon, Customer customer){
-        System.out.println("hi from coupon-customer service->add coupon-customer");
         CouponCustomer couponCustomer= CouponCustomer.builder().customer(customer).coupon(coupon).build();
         this.couponCustomerRepo.save(couponCustomer);
     }

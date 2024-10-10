@@ -404,7 +404,7 @@ public class ServiceDemo implements CommandLineRunner {
 
         System.out.println("get all:");
         System.out.println(""+this.companyService.getCompanyList()+'\n');
-        System.out.println("/////");*/
+        System.out.println("/////");
 
         System.out.println("CUSTOMER:");
         System.out.println("add:");
@@ -515,7 +515,7 @@ public class ServiceDemo implements CommandLineRunner {
         /////
         //update:
 
-        /*System.out.println("0.valid:");
+        System.out.println("0.valid:");
         try {
             this.customerService.updateCustomer(1,Customer.builder()
                     .firstName("customer1-updated")

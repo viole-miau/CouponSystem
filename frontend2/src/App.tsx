@@ -11,9 +11,9 @@ import CompanyTable from "./components/company/CompanyTable";
 import CustomerTable from "./components/customer/CustomerTable";
 import CouponTable from "./components/coupon/CouponTable";
 import {
-  getCompanies,
   getCustomers,
   addCompany,
+  editCompany,
 } from "./controllers/adminController";
 import CompanyLayout from "./components/layouts/CompanyLayout";
 import CustomerLayout from "./components/layouts/CustomerLayout";
@@ -32,16 +32,21 @@ const theme = createTheme({
 
 const router = createBrowserRouter(
   //creates routing structure based on paths (location) and
-  //corresponding elements which it gets from function createRoutesFromElements. routs are h~~ierarchical
+  //corresponding elements which it gets from function createRoutesFromElements. routs are hierarchical
   createRoutesFromElements(
     //contains definitions of desired paths and elements
 
     //loader: gets function and loads data from function immendiately once the page is up
+    //index=means the element works as index for what comes afterwards (persists in page)
     <Route path="/">
       <Route path="admin" element={<AdminLayout />}>
         <Route path="company">
-          <Route index element={<CompanyTable />} loader={getCompanies} />
+          <Route index element={<CompanyTable />} />
           <Route path="add" element={<CompanyForm onSubmit={addCompany} />} />
+          <Route
+            path="update/:id"
+            element={<CompanyForm onSubmit={editCompany} />}
+          />
         </Route>
         <Route path="customer">
           <Route index element={<CustomerTable />} loader={getCustomers} />
@@ -58,7 +63,7 @@ const router = createBrowserRouter(
 );
 
 function App() {
-  //contains themeProvider (defines design) and routerRovider (defines routing structure)
+  //contains themeProvider (defines design) a
   //and routerRovider (defines routing structure)
   return (
     <>

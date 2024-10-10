@@ -9,7 +9,7 @@ class Company {
   public readonly id?: number;
   public name: string;
   public email: string;
-  private password: string;
+  public password: string;
 
   constructor(args: CompanyConstractorArguments) {
     this.name = args.name;
@@ -23,6 +23,14 @@ class Company {
       .split("")
       .map((char) => "*")
       .join("");
+  }
+
+  static emptyCompany() {
+    return new Company({
+      name: "",
+      email: "",
+      password: "",
+    });
   }
 }
 

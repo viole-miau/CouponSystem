@@ -3,8 +3,7 @@ import Company from "../models/Company";
 import Customer from "../models/Customer";
 
 //sends queries to server
-
-export default class AdminController extends BaseController {
+class AdminController extends BaseController {
   constructor() {
     const baseUrl: string = "admin/";
     super(baseUrl);
@@ -25,13 +24,15 @@ export default class AdminController extends BaseController {
 
   async updateCompany(company: Company) {
     try {
-      const response = await this.instance.put(
-        `updateCompany/${company.id}`,
-        company
-      );
-      console.log(response);
+      const { name, email, password } = company;
+      const response = await this.instance.put(`updateCompany/${company.id}`, {
+        name,
+        email,
+        password,
+      });
+      return response.status == 200;
     } catch (err) {
-      console.error(err);
+      throw err;
     }
   }
 
@@ -46,14 +47,14 @@ export default class AdminController extends BaseController {
     }
   }
 
-  async getCompany(company: Pick<Required<Company>, "id">): Promise<void> {
+  async getCompany(company: Pick<Required<Company>, "id">): Promise<Company> {
     try {
       const companyData = (
         await this.instance.get<Company>(`getCompany/${company.id}`)
       ).data;
-      console.log(companyData);
+      return companyData;
     } catch (err) {
-      console.error(err);
+      throw err;
     }
   }
 
@@ -138,7 +139,9 @@ export function getCompanies() {
   return controller
     .getAllCompanies()
     .then((result) => result)
-    .catch((err) => console.log(err));
+    .catch((err) => {
+      throw err;
+    });
 }
 
 export function getCustomers() {
@@ -153,6 +156,28 @@ export function addCompany(company: Company) {
   const controller = new AdminController();
   return controller
     .addCompany(company)
+    .then((result) => result)
+    .catch((err) => {
+      throw err;
+    });
+}
+
+export function editCompany(company: Company) {
+  const controller = new AdminController();
+  return controller
+    .updateCompany(company)
+    .then((result) => result)
+    .catch((err) => {
+      throw err;
+    });
+}
+
+export function getCompany(companyId: number) {
+  const controller = new AdminController();
+  return controller
+    .getCompany({
+      id: companyId,
+    })
     .then((result) => result)
     .catch((err) => {
       throw err;

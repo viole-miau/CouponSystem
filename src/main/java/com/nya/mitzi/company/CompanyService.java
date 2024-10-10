@@ -15,7 +15,6 @@ public class CompanyService {
     private CompanyRepo companyRepo;
 
     public Company addCompany(Company company)throws CompanyException {
-        System.out.println("company name: "+company.getName());
         /*
         errors:
             1.name
@@ -44,7 +43,6 @@ public class CompanyService {
         if(this.companyRepo.existsByEmail(company.getEmail())){
             throw new CompanyException(ErrorMessage.EMAIL_EXIST);
         }
-        System.out.println("company added"+'\n');
         return this.companyRepo.save(company);
     }
 
@@ -92,8 +90,6 @@ public class CompanyService {
         //if(this.companyRepo.existsByName(company.getName())){
           //  this.isUniqueByName(company);
         //}
-
-        System.out.println("company updated"+'\n');
         this.companyRepo.save(company);
     }
 
@@ -106,7 +102,6 @@ public class CompanyService {
         if(!this.companyRepo.existsById(id)) {
             throw new CompanyException(ErrorMessage.ID_NOT_EXIST);//todo fix
         }
-        System.out.println("company deleted"+'\n');
         this.companyRepo.deleteById(id);
     }
 
@@ -151,93 +146,5 @@ public class CompanyService {
         }
         throw new CompanyException(ErrorMessage.NAME_EXIST);
     }
-
-/*    public Company addCompany(Company company) throws CompanyException{//todo fix so doesnt contain id
-        if(!this.isUnique(company)){
-            throw new CompanyException(ErrorMessage.COMPANY_NOT_UNIQUE);
-        }
-        if(company.getPassword().isEmpty() || company.getEmail().isEmpty() || company.getName().isEmpty()){
-            System.out.println("missing details");
-            throw new CompanyException(ErrorMessage.MISSING_DETAILS);
-        }//todo fix
-        return this.companyRepo.save(company);
-    }
-
-    public Company getCompany(int id) throws CompanyException {
-        return this.companyRepo.findById(id).orElseThrow(
-                ()->new CompanyException(ErrorMessage.ID_NOT_EXIST));
-    }
-
-    public List<Company> getCompanyList(){
-        return this.companyRepo.findAll();
-    }
-
-    public void updateCompany(int id, Company company) throws CompanyException {
-
-        if(!this.companyRepo.existsById(id)){
-            throw new CompanyException(ErrorMessage.ID_NOT_EXIST);
-        }
-
-        if(this.companyRepo.existsByEmail(company.getEmail())){
-            Company otherCompany=this.companyRepo.findByEmail(company.getEmail());
-            if(otherCompany.getId()!=id){
-                System.out.println("email not unique");
-                return;
-                //throw new CompanyException(ErrorMessage.EMAIL_EXIST);
-            }
-        }//todo improve
-
-        if(this.companyRepo.existsByName(company.getName())){
-            Company company1=this.companyRepo.findByName(company.getName());
-            if(company1.getId()!=id){
-                throw new CompanyException(ErrorMessage.NAME_EXIST);
-            }
-        }//todo improve
-
-        if(company.getEmail()==null||company.getPassword()==null||company.getName()==null
-                || company.getEmail().isEmpty() || company.getPassword().isEmpty() || company.getName().isEmpty()){
-            System.out.println("missing details");
-            return;//todo add exception
-        }
-
-        company.setId(id);
-        this.companyRepo.save(company);
-    }
-
-    public void deleteCompany(int id) throws CompanyException {
-        if(!this.companyRepo.existsById(id)){
-            throw new CompanyException(ErrorMessage.ID_NOT_EXIST);
-        }
-        this.companyRepo.deleteById(id);
-    }
-
-    public boolean isUnique(Company company) throws CompanyException {
-        System.out.println("hi from is unique");
-        if(this.companyRepo.existsById(company.getId())){
-            System.out.println("ERROR: ID");
-            throw new CompanyException(ErrorMessage.ID_ALREADY_FOUND);
-        }
-        if(this.companyRepo.existsByName(company.getName())){
-            System.out.println("ERROR: NAME");
-            throw new CompanyException(ErrorMessage.COMPANY_NAME_EXIST);
-        }//todo fix
-        if(this.companyRepo.existsByEmail(company.getEmail())){
-            System.out.println("ERROR: EMAIL");
-            throw new CompanyException(ErrorMessage.EMAIL_EXIST);
-        }//todo fix
-        return true;
-    }
-
-    public boolean isExist(Company company) {
-        return this.companyRepo.existsByEmailAndPassword(company.getEmail(),company.getPassword());
-    }
-
-    public boolean existById(Company company){
-        //System.out.println("hi from company service-> exist by id");
-        //System.out.println("result: "+result);
-        return this.companyRepo.existsById(company.getId());
-    }*/
-
-
 
 }

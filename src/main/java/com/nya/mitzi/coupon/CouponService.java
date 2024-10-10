@@ -21,7 +21,6 @@ public class CouponService {
 
     @Autowired
     private CouponRepo couponRepo;
-    //private CouponValidator couponValidator=new CouponValidator();
     @Autowired
     private CompanyService companyService;
     @Autowired
@@ -31,19 +30,10 @@ public class CouponService {
     @Autowired
     CouponCustomerRepo couponCustomerRepo;
 
-/*    public Coupon addCoupon(Coupon coupon) throws CouponException {
-        this.isUnique(coupon);
-        return this.couponRepo.save(coupon);
-    }*/
-
     public Coupon addCoupon(Coupon coupon) throws CouponException, CompanyException {//todo fix so doesnt contain id
         if (coupon.getCompany()==null){
             throw new CouponException(ErrorMessage.MISSING_COMPANY);
         }
-
-        /*if(!this.companyService.existById(coupon.getCompany())){
-            throw new CouponException(ErrorMessage.COMPANY_NOT_EXIST);//todo prettify
-        }*/
 
         this.isUnique(coupon);
         if((coupon.getTitle().length()<=0)||(coupon.getCompany()==null)){//todo check if i need both this and companyService.isExist
@@ -64,7 +54,6 @@ public class CouponService {
 
     public void updateCoupon(int couponId, Coupon coupon) throws CouponException {
         coupon.setId(couponId);
-        //this.isUnique(coupon);
         couponRepo.save(coupon);
     }
 
@@ -104,46 +93,28 @@ public class CouponService {
             return false;//todo prettify
         }
 
-        //Boolean companyExists=this.companyService.existById(coupon.getCompany());
-
-        //System.out.println("back to coupon service-> is exist");
-        //System.out.println("boolean companyExists: "+companyExists);
-
-  /*      if(!companyExists){
-            //throw new CouponException(ErrorMessage.COMPANY_NOT_EXIST);//todo prettify
-            System.out.println("company no exist");
-            return false;
-        }*/
-
         boolean couponExists=
                 this.couponRepo.existsByTitleAndCompanyId(coupon.getTitle(),coupon.getCompany().getId());
 
-        //System.out.println("coupon exists by company and title "+couponExists);
         return this.couponRepo.existsByTitleAndCompanyId(coupon.getTitle(),coupon.getCompany().getId());
     }
 
     public void purchaseCoupon(int couponId, int customerId) throws CouponException, CustomerException {
-        System.out.println("hi from coupon service->purchase coupon");
-
         Coupon coupon=this.getCoupon(couponId);
         Customer customer=this.customerService.getCustomer(customerId);
 
         if(!this.isExist(coupon)){
             throw new CouponException(ErrorMessage.COUPON_NOT_EXIST);
         }
-        System.out.println("hi from post coupon not exist");
         if(!this.customerService.isExist(customer)){
             throw new CustomerException(ErrorMessage.CUSTOMER_NOT_EXIST);
         }
-        System.out.println("hi from post customer not exist");
         if(this.couponCustomerService.existsByCouponAndCustomer(coupon,customer)){
             throw new CouponException(ErrorMessage.COUPON_PURCHASED_BY_CUSTOMER);
         }
-        System.out.println("hi from post coupon purchased by customer");
         if(coupon.getAmount()<1){
             throw new CouponException(ErrorMessage.NO_COUPONS_LEFT);
         }
-        System.out.println("hi from post no coupons left");
 
         this.couponCustomerService.addCouponCustomer(coupon,customer);
     }
@@ -177,24 +148,14 @@ public class CouponService {
         List<Coupon>list1=this.getCouponsByCustomer(customerId);
         List<Coupon>list2=new ArrayList<>();
 
-        //System.out.println("list1: "+list1);
-
         for (int j = 0; j < list1.size(); j++) {
-            System.out.println("iteration no."+j);
             if(list1.get(j).getCategory()!=null) {
                 if (list1.get(j).getCategory().getId() == categoryId) {
                     list2.add(list1.get(j));
                 }
             }
-            //System.out.println("coupons ol list1: "+list1.get(j));
         }
-        //System.out.println("list2: "+list2);
-
-
-
         return list2;
-
-        //return this.couponRepo.findAllByCustomerIdAndCategoryId(customerId,categoryId);
     }
 
 
@@ -215,8 +176,6 @@ public class CouponService {
         System.out.println("list2: "+list2);
 
         return list2;
-
-        //return this.findAllByCustomerAndMaxPrice(customerId, maxPrice);
     }
 
 

@@ -15,7 +15,6 @@ public class CustomerService {
     private CustomerValidator customerValidator;
 
     public Customer addCustomer(Customer customer)throws CustomerException {
-        System.out.println("customer name: "+customer.getFirstName());
         /*
         errors:
             1.name
@@ -44,7 +43,6 @@ public class CustomerService {
         if(this.customerRepo.existsByEmail(customer.getEmail())){
             throw new CustomerException(ErrorMessage.EMAIL_EXIST);
         }
-        System.out.println("customer added"+'\n');
         return this.customerRepo.save(customer);
     }
 
@@ -92,8 +90,6 @@ public class CustomerService {
         //if(this.customerRepo.existsByName(customer.getName())){
         //  this.isUniqueByName(customer);
         //}
-
-        System.out.println("customer updated"+'\n');
         this.customerRepo.save(customer);
     }
 
@@ -152,124 +148,6 @@ public class CustomerService {
         throw new CustomerException(ErrorMessage.NAME_EXIST);
     }
 
-
-/*public Customer addCustomer(Customer customer) throws CustomerException{//todo fix so doesnt contain id
-    this.isUnique(customer);
-    if(customer.getPassword().length() == 0 || customer.getEmail().length() == 0 || customer.getFirstName().length() == 0){
-        throw new CustomerException(ErrorMessage.MISSING_DETAILS);
-    }
-    return this.customerRepo.save(customer);
-}
-
-    public Customer addCustomer(Customer customer) throws CustomerException {//todo fix so doesnt contain id
-        if(!this.isUnique(customer)){
-            return null;
-            //throw new CustomerException(ErrorMessage.CUSTOMER_NOT_UNIQUE);
-        }
-        if((customer.getPassword()==null) || (customer.getEmail()==null) || (customer.getFirstName()==null)){
-            System.out.println("password: "+customer.getPassword());
-            System.out.println("email: "+customer.getEmail());
-            System.out.println("firstName: "+customer.getFirstName());
-            System.out.println("missing details");
-            return null;
-            //throw new CustomerException(ErrorMessage.MISSING_DETAILS);
-        }//todo fix
-        return this.customerRepo.save(customer);
-    }
-
-    public Customer getCustomer(int id) throws CustomerException {
-        return this.customerRepo.findById(id).orElseThrow(()->new CustomerException
-                (ErrorMessage.ID_NOT_EXIST));
-    }
-
-    public List<Customer> getCustomerList(){
-        return this.customerRepo.findAll();
-    }
-
-    /*public void updateCustomer(int id,Customer customer) throws CustomerException {
-        this.isUnique(customer);
-        customer.setId(id);
-        customerRepo.save(customer);
-    }
-    public void updateCustomer(int id, Customer customer) throws CustomerException {
-        System.out.println("hi from update customer");
-        if (!this.customerRepo.existsById(id)) {
-            //throw new CustomerException(ErrorMessage.ID_NOT_EXIST);
-            return;
-        }
-        System.out.println("id exists");
-        if (this.customerRepo.existsByEmail(customer.getEmail())) {
-            Customer otherCustomer = this.customerRepo.findByEmail(customer.getEmail());
-            if (otherCustomer.getId() != id) {
-                System.out.println("email not unique");
-                return;
-                //throw new CustomerException(ErrorMessage.EMAIL_EXIST);
-            }
-        }//todo improve
-        System.out.println("email unique");
-        if (this.customerRepo.existsByFirstName(customer.getFirstName())) {
-            Customer customer1 = this.customerRepo.findByFirstName(customer.getFirstName());
-            if (customer1.getId() != id) {
-                //throw new CustomerException(ErrorMessage.NAME_EXIST);
-            return;
-            }
-        }//todo improve
-        System.out.println("first name unique"+'\n');
-
-        System.out.println(customer.getFirstName()!=null);
-        System.out.println(customer.getEmail()!=null);
-        System.out.println(customer.getPassword()!=null);
-
-        boolean isUpdate=true;
-
-        if(this.customerRepo.existsByEmail(customer.getEmail())){
-            Customer otherCustomer=this.customerRepo.findByEmail(customer.getEmail());
-            if(otherCustomer.getId()!=id){
-                System.out.println("email not unique");
-                return;
-                //throw new CustomerException(ErrorMessage.EMAIL_EXIST);
-            }
-        }
-
-
-        if(customer.getEmail()==null||customer.getPassword()==null||customer.getFirstName()==null
-                || customer.getEmail().isEmpty() || customer.getPassword().isEmpty() || customer.getFirstName().isEmpty()){
-            System.out.println("missing details");
-            return;//todo add exception
-        }
-
-        if((customer.getFirstName()!=null)&&(customer.getEmail()!=null)&&(customer.getPassword()!=null)){
-            customer.setId(id);
-            customerRepo.save(customer);
-        }
-        else {
-        }
-    }
-
-
-        public void deleteCustomer(int id) throws CustomerException {
-        if(!this.customerRepo.existsById(id)){
-            //throw new CustomerException(ErrorMessage.ID_NOT_EXIST);
-            return;
-        }
-        this.customerRepo.deleteById(Math.toIntExact(id));
-    }
-
-    public boolean isUnique(Customer customer) throws CustomerException {
-        if(this.customerRepo.existsById(customer.getId())){
-            //throw new CustomerException(ErrorMessage.ID_ALREADY_FOUND);
-            return false;
-        }
-        if(this.customerRepo.existsByEmail(customer.getEmail())){
-            //throw new CustomerException(ErrorMessage.EMAIL_EXIST);
-            return false;
-        }
-        if(this.customerRepo.existsByFirstName(customer.getFirstName())){
-            //throw new CustomerException(ErrorMessage.NAME_EXIST);
-            return false;
-        }
-        return true;
-    }*/
 
     public boolean isExist(Customer customer) {
         return this.customerRepo.existsByEmailAndPassword(customer.getEmail(),customer.getPassword());
